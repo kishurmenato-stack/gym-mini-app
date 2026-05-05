@@ -15,41 +15,73 @@
             --success: #31b545;
             --gold: #ffd700;
         }
+
         body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; padding-bottom: 80px; }
-        .card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { margin-top: 0; font-size: 18px; color: var(--accent-color); text-align: center; }
-        label { display: block; font-size: 11px; color: var(--hint-color); text-transform: uppercase; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
-        .date-selector-trigger { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 10px; }
-        .calendar-dropdown { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: rgba(0,0,0,0.3); border-radius: 12px; }
-        .calendar-dropdown.open { max-height: 400px; margin-bottom: 15px; border: 1px solid rgba(51, 144, 236, 0.3); }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; padding: 10px; }
-        .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; border-radius: 50%; cursor: pointer; }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+        h2 { margin-top: 0; font-size: 18px; color: var(--accent-color); text-align: center; padding-top: 15px; }
+        label { display: block; font-size: 11px; color: var(--hint-color); text-transform: uppercase; margin: 10px 15px 5px; }
+        
+        input { 
+            width: calc(100% - 30px); margin: 0 15px 10px; padding: 12px; 
+            border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(0,0,0,0.2); color: white; font-size: 16px; box-sizing: border-box; 
+        }
+
+        .date-selector-trigger { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 10px; padding: 12px; margin: 0 15px 10px; 
+            display: flex; justify-content: space-between; cursor: pointer; 
+        }
+
+        .calendar-dropdown { max-height: 0; overflow: hidden; transition: 0.3s; background: rgba(0,0,0,0.3); margin: 0 15px; border-radius: 10px; }
+        .calendar-dropdown.open { max-height: 300px; margin-bottom: 15px; border: 1px solid var(--accent-color); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; padding: 10px; text-align: center; }
+        .day { padding: 8px 0; font-size: 13px; border-radius: 50%; cursor: pointer; }
         .day.selected { background: var(--accent-color); color: white; }
-        .day.has-workout { border: 2px solid var(--success); }
-        .selector { display: flex; gap: 5px; overflow-x: auto; margin-bottom: 15px; }
-        .sel-item { min-width: 44px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .day.has-workout { box-shadow: inset 0 0 0 2px var(--success); }
+
+        .selector { display: flex; gap: 8px; margin: 0 15px 15px; overflow-x: auto; }
+        .sel-item { 
+            min-width: 44px; height: 44px; background: rgba(255,255,255,0.05); 
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; 
+        }
         .sel-item.active { background: var(--accent-color); }
-        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--accent-color); color: white; font-size: 16px; font-weight: bold; }
+
+        .btn-main { 
+            width: calc(100% - 30px); margin: 0 15px 15px; padding: 15px; 
+            border-radius: 12px; border: none; background: var(--accent-color); 
+            color: white; font-size: 16px; font-weight: bold; 
+        }
+
+        .last-info-text { font-size: 11px; color: var(--gold); margin: -5px 15px 10px; display: block; }
+
         .ex-block { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; margin-bottom: 10px; border-left: 4px solid var(--accent-color); }
-        .set-line { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; border-top: 1px solid rgba(255,255,255,0.05); }
-        .best-session-box { margin-top: 10px; padding: 10px; background: rgba(255, 215, 0, 0.05); border-radius: 8px; font-size: 12px; border: 1px solid rgba(255, 215, 0, 0.1); }
-        .diff-tag { font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: bold; }
+        .ex-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .set-line { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+        
+        .best-session-box { margin-top: 10px; padding: 8px; background: rgba(255, 215, 0, 0.05); border-radius: 8px; font-size: 11px; border: 1px solid rgba(255, 215, 0, 0.1); color: #ccc; }
+        .diff-tag { font-size: 10px; padding: 3px 7px; border-radius: 5px; font-weight: bold; text-transform: uppercase; }
         .diff-plus { background: rgba(255, 215, 0, 0.2); color: var(--gold); }
     </style>
 </head>
 <body>
+
 <div class="card">
     <h2>Запись тренировки</h2>
     <div class="date-selector-trigger" onclick="toggleCalendar()">
         <span>📅 <b id="display-date">Сегодня</b></span>
-        <span id="calendar-arrow">▼</span>
+        <span>▼</span>
     </div>
     <div class="calendar-dropdown" id="calendar-dropdown">
         <div class="calendar-grid" id="calendar-days"></div>
     </div>
-    <input type="text" id="ex-name" placeholder="Упражнение" list="ex-list">
+
+    <label>Упражнение</label>
+    <input type="text" id="ex-name" placeholder="Название..." list="ex-list" oninput="showBestResult(this.value)">
     <datalist id="ex-list"></datalist>
+    <span id="last-info" class="last-info-text"></span>
+
+    <label>Подход</label>
     <div class="selector" id="set-selector">
         <div class="sel-item active" onclick="setNum(1)">1</div>
         <div class="sel-item" onclick="setNum(2)">2</div>
@@ -57,17 +89,21 @@
         <div class="sel-item" onclick="setNum(4)">4</div>
         <div class="sel-item" onclick="setNum(5)">5</div>
     </div>
-    <div style="display:flex; gap:10px;">
-        <input type="number" id="weight" value="60">
-        <input type="number" id="reps" value="10">
+
+    <div style="display:flex;">
+        <div style="flex:1"><label>Вес</label><input type="number" id="weight" value="50" step="0.5"></div>
+        <div style="flex:1"><label>Повторы</label><input type="number" id="reps" value="10"></div>
     </div>
+
     <button class="btn-main" onclick="addSet()">ДОБАВИТЬ В ЖУРНАЛ</button>
 </div>
+
 <div id="workout-container"></div>
 
 <script>
     const tg = window.Telegram.WebApp;
     let selectedDate = new Date();
+    let currentSetNum = 1;
     const todayStr = new Date().toISOString().split('T')[0];
 
     function calculate1RM(w, r) { return (r <= 1) ? w : w * (1 + r / 30); }
@@ -79,43 +115,101 @@
         const container = document.getElementById('calendar-days');
         container.innerHTML = '';
         const now = new Date();
-        for (let i = -15; i <= 5; i++) {
+        for (let i = -20; i <= 5; i++) {
             const d = new Date(); d.setDate(now.getDate() + i);
             const dStr = d.toISOString().split('T')[0];
             const div = document.createElement('div');
-            div.className = 'day' + (dStr === todayStr ? ' today' : '') + (selectedDate.toISOString().split('T')[0] === dStr ? ' selected' : '');
+            div.className = 'day' + (selectedDate.toISOString().split('T')[0] === dStr ? ' selected' : '') + (hasWorkout(dStr) ? ' has-workout' : '');
             div.innerText = d.getDate();
-            div.onclick = () => { selectedDate = d; renderCalendar(); renderWorkout(dStr); toggleCalendar(); };
+            div.onclick = () => { selectedDate = d; document.getElementById('display-date').innerText = dStr === todayStr ? 'Сегодня' : d.toLocaleDateString(); renderCalendar(); renderWorkout(dStr); toggleCalendar(); };
             container.appendChild(div);
         }
     }
 
+    function hasWorkout(dStr) {
+        const h = getHistory();
+        for (let k in h) if (h[k].some(x => x.rawDate === dStr)) return true;
+        return false;
+    }
+
+    function showBestResult(name) {
+        const info = document.getElementById('last-info');
+        const h = getHistory()[name];
+        if (h && h.length > 0) {
+            let max = 0; h.forEach(s => s.sets.forEach(x => { let m = calculate1RM(x.w, x.r); if(m > max) max = m; }));
+            info.innerText = `Рекордный 1ПМ: ${max.toFixed(1)}кг`;
+        } else info.innerText = "";
+    }
+
+    function setNum(n) {
+        currentSetNum = n;
+        document.querySelectorAll('.sel-item').forEach((el, i) => el.classList.toggle('active', i === n-1));
+    }
+
     function addSet() {
-        const name = document.getElementById('ex-name').value;
+        const name = document.getElementById('ex-name').value.trim();
         const w = parseFloat(document.getElementById('weight').value);
         const r = parseInt(document.getElementById('reps').value);
         const dStr = selectedDate.toISOString().split('T')[0];
+        if (!name) return;
+
         let h = getHistory();
         if (!h[name]) h[name] = [];
         let s = h[name].find(x => x.rawDate === dStr);
-        if (s) s.sets.push({w, r}); else h[name].push({rawDate: dStr, date: selectedDate.toLocaleDateString(), sets: [{w, r}]});
+        
+        if (s) s.sets.push({w, r, n: currentSetNum});
+        else h[name].push({rawDate: dStr, date: selectedDate.toLocaleDateString(), sets: [{w, r, n: currentSetNum}]});
+        
         localStorage.setItem('gym_v2_history', JSON.stringify(h));
+        if (currentSetNum < 5) setNum(currentSetNum + 1);
         renderWorkout(dStr);
+        renderCalendar();
         tg.HapticFeedback.notificationOccurred('success');
     }
 
     function renderWorkout(dStr) {
         const container = document.getElementById('workout-container');
-        container.innerHTML = `<h2>Тренировка: ${dStr === todayStr ? 'Сегодня' : dStr}</h2>`;
+        container.innerHTML = `<h2 style="color:var(--accent-color)">Тренировка: ${dStr}</h2>`;
         const h = getHistory();
+        let found = false;
+
         for (let name in h) {
-            const s = h[name].find(x => x.rawDate === dStr);
-            if (!s) continue;
-            container.innerHTML += `<div class="ex-block"><b>${name}</b>${s.sets.map(x => `<div class="set-line"><span>${x.w}кг x ${x.r}</span><span>1ПМ: ${calculate1RM(x.w,x.r).toFixed(1)}</span></div>`).join('')}</div>`;
+            const session = h[name].find(x => x.rawDate === dStr);
+            if (!session) continue;
+            found = true;
+
+            const otherSessions = h[name].filter(x => x.rawDate !== dStr);
+            let best1RM = 0;
+            otherSessions.forEach(os => os.sets.forEach(st => { let m = calculate1RM(st.w, st.r); if(m > best1RM) best1RM = m; }));
+            
+            let currentMax = Math.max(...session.sets.map(x => calculate1RM(x.w, x.r)));
+            let isRecord = best1RM > 0 && currentMax > best1RM;
+
+            container.innerHTML += `
+                <div class="ex-block">
+                    <div class="ex-header">
+                        <b>${name}</b>
+                        ${isRecord ? '<span class="diff-tag diff-plus">НОВЫЙ РЕКОРД 🔥</span>' : ''}
+                    </div>
+                    ${session.sets.map(x => `
+                        <div class="set-line">
+                            <span>Сет ${x.n || '?'}: ${x.w}кг x ${x.r}</span>
+                            <span style="color:var(--hint-color)">1ПМ: ${calculate1RM(x.w, x.r).toFixed(1)}</span>
+                        </div>
+                    `).join('')}
+                    ${best1RM > 0 ? `<div class="best-session-box">Лучший 1ПМ до этого: ${best1RM.toFixed(1)}кг</div>` : ''}
+                </div>`;
         }
+        if(!found) container.innerHTML += '<p style="text-align:center; color:var(--hint-color)">Нет записей за эту дату</p>';
     }
 
-    window.onload = () => { renderCalendar(); renderWorkout(todayStr); tg.expand(); };
+    window.onload = () => {
+        renderCalendar();
+        renderWorkout(todayStr);
+        const list = document.getElementById('ex-list');
+        list.innerHTML = Object.keys(getHistory()).map(n => `<option value="${n}">`).join('');
+        tg.expand();
+    };
 </script>
 </body>
 </html>
