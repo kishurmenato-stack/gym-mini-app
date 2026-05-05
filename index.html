@@ -3,108 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>МайТренер</title>
+    <title>МайТренер Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-color: var(--tg-theme-bg-color, #1a1a1a);
             --text-color: var(--tg-theme-text-color, #ffffff);
             --button-color: var(--tg-theme-button-color, #3390ec);
-            --button-text: var(--tg-theme-button-text-color, #ffffff);
             --hint-color: var(--tg-theme-hint-color, #aaaaaa);
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        h2 { margin-top: 0; text-align: center; color: var(--button-color); }
-
-        .input-group { margin-bottom: 20px; }
-        
-        label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--hint-color); }
-
-        select, input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2);
-            color: white;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .counter-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .btn-round {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: none;
-            background: var(--button-color);
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .main-btn {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            background: var(--button-color);
-            color: var(--button-text);
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .info {
-            font-size: 12px;
-            color: var(--hint-color);
-            text-align: center;
-            margin-top: 15px;
-        }
+        body { font-family: sans-serif; background-color: var(--bg-color); color: var(--text-color); padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px; width: 100%; max-width: 400px; box-sizing: border-box; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 13px; color: var(--hint-color); }
+        select, input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-size: 16px; box-sizing: border-box; }
+        .selector-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .selector-item { flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 14px; cursor: pointer; border: 1px solid transparent; }
+        .selector-item.active { background: var(--button-color); border-color: white; }
+        .counter-group { display: flex; align-items: center; gap: 10px; }
+        .btn-round { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--button-color); color: white; font-size: 20px; cursor: pointer; }
+        .main-btn { width: 100%; padding: 15px; border-radius: 10px; border: none; background: var(--button-color); color: white; font-size: 16px; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🏋️ МайТренер</h2>
-    
+    <label>Выберите день тренировки</label>
+    <div class="selector-row" id="day-selector">
+        <div class="selector-item active" onclick="setDay(1)">День 1</div>
+        <div class="selector-item" onclick="setDay(2)">День 2</div>
+        <div class="selector-item" onclick="setDay(3)">День 3</div>
+    </div>
+
     <div class="input-group">
-        <label>Упражнение</label>
-        <select id="exercise">
-            <option value="Жим лежа">Жим лежа</option>
-            <option value="Приседания">Приседания</option>
-            <option value="Становая тяга">Становая тяга</option>
-            <option value="Подтягивания">Подтягивания</option>
-            <option value="Бицепс">Бицепс</option>
-        </select>
+        <label>Название упражнения (впишите сами)</label>
+        <input type="text" id="exercise" placeholder="Например: Жим штанги">
+    </div>
+
+    <label>Номер подхода</label>
+    <div class="selector-row" id="set-selector">
+        <div class="selector-item active" onclick="setSet(1)">1</div>
+        <div class="selector-item" onclick="setSet(2)">2</div>
+        <div class="selector-item" onclick="setSet(3)">3</div>
+        <div class="selector-item" onclick="setSet(4)">4</div>
+        <div class="selector-item" onclick="setSet(5)">5</div>
     </div>
 
     <div class="input-group">
@@ -125,31 +67,51 @@
         </div>
     </div>
 
-    <button class="main-btn" onclick="sendData()">ЗАПИСАТЬ ПОДХОД</button>
-    <p class="info">Данные будут проанализированы AI-помощником</p>
+    <button class="main-btn" onclick="sendData()">СОХРАНИТЬ ПОДХОД</button>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
-    tg.expand(); // Раскрывает приложение на весь экран
+    tg.expand();
+
+    let currentDay = 1;
+    let currentSet = 1;
+
+    function setDay(day) {
+        currentDay = day;
+        updateUI('day-selector', day - 1);
+    }
+
+    function setSet(set) {
+        currentSet = set;
+        updateUI('set-selector', set - 1);
+    }
+
+    function updateUI(containerId, activeIndex) {
+        let items = document.getElementById(containerId).getElementsByClassName('selector-item');
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.remove('active');
+        }
+        items[activeIndex].classList.add('active');
+        tg.HapticFeedback.selectionChanged();
+    }
 
     function change(id, delta) {
         let input = document.getElementById(id);
-        let val = parseFloat(input.value) + delta;
-        if (val < 0) val = 0;
-        input.value = val;
-        tg.HapticFeedback.impactOccurred('light'); // Вибрация при нажатии
+        input.value = (parseFloat(input.value) + delta).toFixed(1);
+        tg.HapticFeedback.impactOccurred('light');
     }
 
     function sendData() {
         let data = {
-            ex: document.getElementById("exercise").value,
+            day: currentDay,
+            ex: document.getElementById("exercise").value || "Без названия",
+            set: currentSet,
             w: document.getElementById("weight").value,
             r: document.getElementById("reps").value
         };
-        tg.sendData(JSON.stringify(data)); // Отправка данных боту
+        tg.sendData(JSON.stringify(data));
     }
 </script>
-
 </body>
 </html>
