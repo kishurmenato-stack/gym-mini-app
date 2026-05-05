@@ -7,138 +7,115 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: var(--tg-theme-bg-color, #1a1a1a);
+            --bg-color: var(--tg-theme-bg-color, #0f0f0f);
+            --card-bg: var(--tg-theme-secondary-bg-color, #1a1a1a);
             --text-color: var(--tg-theme-text-color, #ffffff);
-            --button-color: var(--tg-theme-button-color, #3390ec);
-            --hint-color: var(--tg-theme-hint-color, #aaaaaa);
-            --card-bg: rgba(255, 255, 255, 0.08);
+            --accent-color: #3390ec;
+            --hint-color: var(--tg-theme-hint-color, #707070);
+            --success: #31b545;
+            --gold: #ffd700;
         }
-        body { font-family: sans-serif; background: var(--bg-color); color: var(--text-color); padding: 15px; margin: 0; }
-        .card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 15px; }
-        
-        /* Статистика и Список */
-        .log-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        .log-table th { color: var(--hint-color); text-align: left; padding-bottom: 8px; }
-        .log-table td { padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05); }
-
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
-        
-        .selector-row { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; }
-        .selector-item { min-width: 40px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; text-align: center; cursor: pointer; }
-        .selector-item.active { background: var(--button-color); font-weight: bold; }
-        
-        .btn-add { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid var(--button-color); background: transparent; color: white; font-weight: bold; margin-bottom: 10px; }
-        .btn-finish { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--button-color); color: white; font-weight: bold; }
-        
-        .counter-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 5px; margin-bottom: 10px; }
-        .btn-step { width: 40px; height: 40px; border-radius: 8px; border: none; background: var(--button-color); color: white; font-size: 20px; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; padding-bottom: 80px; }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; font-size: 18px; color: var(--accent-color); text-align: center; }
+        label { display: block; font-size: 11px; color: var(--hint-color); text-transform: uppercase; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
+        .date-selector-trigger { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 10px; }
+        .calendar-dropdown { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: rgba(0,0,0,0.3); border-radius: 12px; }
+        .calendar-dropdown.open { max-height: 400px; margin-bottom: 15px; border: 1px solid rgba(51, 144, 236, 0.3); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; padding: 10px; }
+        .day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 13px; border-radius: 50%; cursor: pointer; }
+        .day.selected { background: var(--accent-color); color: white; }
+        .day.has-workout { border: 2px solid var(--success); }
+        .selector { display: flex; gap: 5px; overflow-x: auto; margin-bottom: 15px; }
+        .sel-item { min-width: 44px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .sel-item.active { background: var(--accent-color); }
+        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--accent-color); color: white; font-size: 16px; font-weight: bold; }
+        .ex-block { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; margin-bottom: 10px; border-left: 4px solid var(--accent-color); }
+        .set-line { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+        .best-session-box { margin-top: 10px; padding: 10px; background: rgba(255, 215, 0, 0.05); border-radius: 8px; font-size: 12px; border: 1px solid rgba(255, 215, 0, 0.1); }
+        .diff-tag { font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: bold; }
+        .diff-plus { background: rgba(255, 215, 0, 0.2); color: var(--gold); }
     </style>
 </head>
 <body>
-
 <div class="card">
-    <input type="text" id="ex-input" list="ex-list" placeholder="Упражнение...">
+    <h2>Запись тренировки</h2>
+    <div class="date-selector-trigger" onclick="toggleCalendar()">
+        <span>📅 <b id="display-date">Сегодня</b></span>
+        <span id="calendar-arrow">▼</span>
+    </div>
+    <div class="calendar-dropdown" id="calendar-dropdown">
+        <div class="calendar-grid" id="calendar-days"></div>
+    </div>
+    <input type="text" id="ex-name" placeholder="Упражнение" list="ex-list">
     <datalist id="ex-list"></datalist>
-
-    <div class="selector-row" id="set-selector">
-        <div class="selector-item active" onclick="setSet(1)">1</div>
-        <div class="selector-item" onclick="setSet(2)">2</div>
-        <div class="selector-item" onclick="setSet(3)">3</div>
-        <div class="selector-item" onclick="setSet(4)">4</div>
-        <div class="selector-item" onclick="setSet(5)">5</div>
+    <div class="selector" id="set-selector">
+        <div class="sel-item active" onclick="setNum(1)">1</div>
+        <div class="sel-item" onclick="setNum(2)">2</div>
+        <div class="sel-item" onclick="setNum(3)">3</div>
+        <div class="sel-item" onclick="setNum(4)">4</div>
+        <div class="sel-item" onclick="setNum(5)">5</div>
     </div>
-
-    <div class="counter-row">
-        <button class="btn-step" onclick="step('weight', -2.5)">-</button>
-        <input type="number" id="weight" value="50" style="margin:0; border:none; text-align:center; width:60px;">
-        <button class="btn-step" onclick="step('weight', 2.5)">+</button>
+    <div style="display:flex; gap:10px;">
+        <input type="number" id="weight" value="60">
+        <input type="number" id="reps" value="10">
     </div>
-
-    <div class="counter-row">
-        <button class="btn-step" onclick="step('reps', -1)">-</button>
-        <input type="number" id="reps" value="10" style="margin:0; border:none; text-align:center; width:60px;">
-        <button class="btn-step" onclick="step('reps', 1)">+</button>
-    </div>
-
-    <button class="btn-add" onclick="addSet()">ДОБАВИТЬ В СПИСОК</button>
+    <button class="btn-main" onclick="addSet()">ДОБАВИТЬ В ЖУРНАЛ</button>
 </div>
-
-<div class="card">
-    <div style="font-size: 12px; color: var(--hint-color); margin-bottom: 10px;">ЖУРНАЛ ТРЕНИРОВКИ</div>
-    <table class="log-table" id="log-body">
-        <thead><tr><th>Упр.</th><th>Сет</th><th>Вес</th><th>Повт.</th></tr></thead>
-        <tbody><!-- Сюда будут падать записи --></tbody>
-    </table>
-</div>
-
-<button class="btn-finish" onclick="finishTraining()">ЗАВЕРШИТЬ ТРЕНИРОВКУ</button>
+<div id="workout-container"></div>
 
 <script>
-    let tg = window.Telegram.WebApp;
-    tg.expand();
+    const tg = window.Telegram.WebApp;
+    let selectedDate = new Date();
+    const todayStr = new Date().toISOString().split('T')[0];
 
-    let currentSet = 1;
-    let trainingLog = [];
+    function calculate1RM(w, r) { return (r <= 1) ? w : w * (1 + r / 30); }
+    function getHistory() { return JSON.parse(localStorage.getItem('gym_v2_history') || '{}'); }
 
-    function addSet() {
-        const ex = document.getElementById('ex-input').value;
-        const w = document.getElementById('weight').value;
-        const r = document.getElementById('reps').value;
+    function toggleCalendar() { document.getElementById('calendar-dropdown').classList.toggle('open'); }
 
-        if (!ex) { tg.showAlert("Введите название!"); return; }
-
-        // Добавляем в локальный массив
-        const entry = { ex, w, r, set: currentSet };
-        trainingLog.push(entry);
-
-        // Обновляем таблицу на экране (приложение НЕ закрывается)
-        const tbody = document.querySelector('#log-body tbody');
-        const row = `<tr><td>${ex}</td><td>${currentSet}</td><td>${w}</td><td>${r}</td></tr>`;
-        tbody.innerHTML += row;
-
-        // Сохраняем название в автодополнение
-        saveEx(ex);
-
-        // Переключаем на следующий подход
-        if(currentSet < 5) setSet(currentSet + 1);
-        
-        tg.HapticFeedback.notificationOccurred('success');
-    }
-
-    function finishTraining() {
-        if(trainingLog.length === 0) { tg.close(); return; }
-        
-        // Отправляем ПОСЛЕДНЮЮ запись боту для AI-анализа 
-        // (Либо можно переделать бота на прием всего массива)
-        const lastEntry = trainingLog[trainingLog.length - 1];
-        tg.sendData(JSON.stringify(lastEntry)); 
-    }
-
-    function setSet(n) {
-        currentSet = n;
-        document.querySelectorAll('.selector-item').forEach((it, i) => it.classList.toggle('active', i === n-1));
-    }
-
-    function step(id, val) {
-        let el = document.getElementById(id);
-        el.value = (parseFloat(el.value) + val).toFixed(1);
-    }
-
-    function saveEx(val) {
-        let list = JSON.parse(localStorage.getItem('exList') || '[]');
-        if(!list.includes(val)) {
-            list.push(val);
-            localStorage.setItem('exList', JSON.stringify(list));
-            updateDatalist();
+    function renderCalendar() {
+        const container = document.getElementById('calendar-days');
+        container.innerHTML = '';
+        const now = new Date();
+        for (let i = -15; i <= 5; i++) {
+            const d = new Date(); d.setDate(now.getDate() + i);
+            const dStr = d.toISOString().split('T')[0];
+            const div = document.createElement('div');
+            div.className = 'day' + (dStr === todayStr ? ' today' : '') + (selectedDate.toISOString().split('T')[0] === dStr ? ' selected' : '');
+            div.innerText = d.getDate();
+            div.onclick = () => { selectedDate = d; renderCalendar(); renderWorkout(dStr); toggleCalendar(); };
+            container.appendChild(div);
         }
     }
 
-    function updateDatalist() {
-        const list = JSON.parse(localStorage.getItem('exList') || '[]');
-        document.getElementById('ex-list').innerHTML = list.map(i => `<option value="${i}">`).join('');
+    function addSet() {
+        const name = document.getElementById('ex-name').value;
+        const w = parseFloat(document.getElementById('weight').value);
+        const r = parseInt(document.getElementById('reps').value);
+        const dStr = selectedDate.toISOString().split('T')[0];
+        let h = getHistory();
+        if (!h[name]) h[name] = [];
+        let s = h[name].find(x => x.rawDate === dStr);
+        if (s) s.sets.push({w, r}); else h[name].push({rawDate: dStr, date: selectedDate.toLocaleDateString(), sets: [{w, r}]});
+        localStorage.setItem('gym_v2_history', JSON.stringify(h));
+        renderWorkout(dStr);
+        tg.HapticFeedback.notificationOccurred('success');
     }
 
-    window.onload = updateDatalist;
+    function renderWorkout(dStr) {
+        const container = document.getElementById('workout-container');
+        container.innerHTML = `<h2>Тренировка: ${dStr === todayStr ? 'Сегодня' : dStr}</h2>`;
+        const h = getHistory();
+        for (let name in h) {
+            const s = h[name].find(x => x.rawDate === dStr);
+            if (!s) continue;
+            container.innerHTML += `<div class="ex-block"><b>${name}</b>${s.sets.map(x => `<div class="set-line"><span>${x.w}кг x ${x.r}</span><span>1ПМ: ${calculate1RM(x.w,x.r).toFixed(1)}</span></div>`).join('')}</div>`;
+        }
+    }
+
+    window.onload = () => { renderCalendar(); renderWorkout(todayStr); tg.expand(); };
 </script>
 </body>
 </html>
