@@ -1,36 +1,155 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>МайТренер</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); padding: 20px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; border-radius: 8px; cursor: pointer; }
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #1a1a1a);
+            --text-color: var(--tg-theme-text-color, #ffffff);
+            --button-color: var(--tg-theme-button-color, #3390ec);
+            --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --hint-color: var(--tg-theme-hint-color, #aaaaaa);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        h2 { margin-top: 0; text-align: center; color: var(--button-color); }
+
+        .input-group { margin-bottom: 20px; }
+        
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--hint-color); }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .counter-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .btn-round {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: var(--button-color);
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .main-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: var(--button-color);
+            color: var(--button-text);
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .info {
+            font-size: 12px;
+            color: var(--hint-color);
+            text-align: center;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
-    <h3>Дневник Прогресса 🏋️</h3>
-    <input type="text" id="exercise" placeholder="Упражнение (например, Жим)">
-    <input type="number" id="weight" placeholder="Вес (кг)">
-    <input type="number" id="reps" placeholder="Повторения">
-    <button id="send">Сохранить подход</button>
 
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand(); // Развернуть на весь экран
+<div class="card">
+    <h2>🏋️ МайТренер</h2>
+    
+    <div class="input-group">
+        <label>Упражнение</label>
+        <select id="exercise">
+            <option value="Жим лежа">Жим лежа</option>
+            <option value="Приседания">Приседания</option>
+            <option value="Становая тяга">Становая тяга</option>
+            <option value="Подтягивания">Подтягивания</option>
+            <option value="Бицепс">Бицепс</option>
+        </select>
+    </div>
 
-        document.getElementById("send").addEventListener("click", () => {
-            let data = {
-                exercise: document.getElementById("exercise").value,
-                weight: document.getElementById("weight").value,
-                reps: document.getElementById("reps").value
-            };
-            tg.sendData(JSON.stringify(data)); // Отправляем данные боту
-            tg.close(); // Закрываем мини-апп
-        });
-    </script>
+    <div class="input-group">
+        <label>Вес (кг)</label>
+        <div class="counter-group">
+            <button class="btn-round" onclick="change('weight', -2.5)">-</button>
+            <input type="number" id="weight" value="50" step="0.5">
+            <button class="btn-round" onclick="change('weight', 2.5)">+</button>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>Повторения</label>
+        <div class="counter-group">
+            <button class="btn-round" onclick="change('reps', -1)">-</button>
+            <input type="number" id="reps" value="10">
+            <button class="btn-round" onclick="change('reps', 1)">+</button>
+        </div>
+    </div>
+
+    <button class="main-btn" onclick="sendData()">ЗАПИСАТЬ ПОДХОД</button>
+    <p class="info">Данные будут проанализированы AI-помощником</p>
+</div>
+
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand(); // Раскрывает приложение на весь экран
+
+    function change(id, delta) {
+        let input = document.getElementById(id);
+        let val = parseFloat(input.value) + delta;
+        if (val < 0) val = 0;
+        input.value = val;
+        tg.HapticFeedback.impactOccurred('light'); // Вибрация при нажатии
+    }
+
+    function sendData() {
+        let data = {
+            ex: document.getElementById("exercise").value,
+            w: document.getElementById("weight").value,
+            r: document.getElementById("reps").value
+        };
+        tg.sendData(JSON.stringify(data)); // Отправка данных боту
+    }
+</script>
+
 </body>
 </html>
