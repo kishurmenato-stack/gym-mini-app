@@ -1,0 +1,36 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); padding: 20px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h3>Дневник Прогресса 🏋️</h3>
+    <input type="text" id="exercise" placeholder="Упражнение (например, Жим)">
+    <input type="number" id="weight" placeholder="Вес (кг)">
+    <input type="number" id="reps" placeholder="Повторения">
+    <button id="send">Сохранить подход</button>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Развернуть на весь экран
+
+        document.getElementById("send").addEventListener("click", () => {
+            let data = {
+                exercise: document.getElementById("exercise").value,
+                weight: document.getElementById("weight").value,
+                reps: document.getElementById("reps").value
+            };
+            tg.sendData(JSON.stringify(data)); // Отправляем данные боту
+            tg.close(); // Закрываем мини-апп
+        });
+    </script>
+</body>
+</html>
