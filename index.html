@@ -11,36 +11,45 @@
             --text-color: var(--tg-theme-text-color, #ffffff);
             --button-color: var(--tg-theme-button-color, #3390ec);
             --hint-color: var(--tg-theme-hint-color, #aaaaaa);
+            --card-bg: rgba(255, 255, 255, 0.08);
         }
-        body { font-family: sans-serif; background-color: var(--bg-color); color: var(--text-color); padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px; width: 100%; max-width: 400px; box-sizing: border-box; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 13px; color: var(--hint-color); }
-        select, input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-size: 16px; box-sizing: border-box; }
-        .selector-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .selector-item { flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 14px; cursor: pointer; border: 1px solid transparent; }
-        .selector-item.active { background: var(--button-color); border-color: white; }
-        .counter-group { display: flex; align-items: center; gap: 10px; }
-        .btn-round { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--button-color); color: white; font-size: 20px; cursor: pointer; }
-        .main-btn { width: 100%; padding: 15px; border-radius: 10px; border: none; background: var(--button-color); color: white; font-size: 16px; font-weight: bold; margin-top: 10px; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 16px; width: 100%; max-width: 400px; box-sizing: border-box; margin-bottom: 15px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .stat-box { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; text-align: center; }
+        .stat-val { display: block; font-size: 18px; font-weight: bold; color: var(--button-color); }
+        .stat-lbl { font-size: 11px; color: var(--hint-color); }
+        
+        label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--hint-color); }
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 15px; }
+        
+        .selector-row { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .selector-item { min-width: 50px; text-align: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; font-size: 14px; cursor: pointer; }
+        .selector-item.active { background: var(--button-color); font-weight: bold; }
+        
+        .btn-main { width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--button-color); color: white; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn-main:active { opacity: 0.8; }
+        
+        .counter-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 5px; margin-bottom: 15px; }
+        .btn-step { width: 45px; height: 45px; border-radius: 8px; border: none; background: var(--button-color); color: white; font-size: 20px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <label>Выберите день тренировки</label>
-    <div class="selector-row" id="day-selector">
-        <div class="selector-item active" onclick="setDay(1)">День 1</div>
-        <div class="selector-item" onclick="setDay(2)">День 2</div>
-        <div class="selector-item" onclick="setDay(3)">День 3</div>
+    <div class="stat-lbl" style="text-align: center; margin-bottom: 5px;">СТАТИСТИКА ЗА СЕГОДНЯ</div>
+    <div class="stats-grid">
+        <div class="stat-box"><span class="stat-val" id="total-sets">0</span><span class="stat-lbl">ПОДХОДОВ</span></div>
+        <div class="stat-box"><span class="stat-val" id="total-vol">0</span><span class="stat-lbl">ОБЪЕМ (КГ)</span></div>
     </div>
+</div>
 
-    <div class="input-group">
-        <label>Название упражнения (впишите сами)</label>
-        <input type="text" id="exercise" placeholder="Например: Жим штанги">
-    </div>
+<div class="card">
+    <label>Упражнение</label>
+    <input type="text" id="ex-input" list="ex-list" placeholder="Впишите или выберите..." onchange="saveExToList(this.value)">
+    <datalist id="ex-list"></datalist>
 
-    <label>Номер подхода</label>
+    <label>Подход</label>
     <div class="selector-row" id="set-selector">
         <div class="selector-item active" onclick="setSet(1)">1</div>
         <div class="selector-item" onclick="setSet(2)">2</div>
@@ -49,69 +58,87 @@
         <div class="selector-item" onclick="setSet(5)">5</div>
     </div>
 
-    <div class="input-group">
-        <label>Вес (кг)</label>
-        <div class="counter-group">
-            <button class="btn-round" onclick="change('weight', -2.5)">-</button>
-            <input type="number" id="weight" value="50" step="0.5">
-            <button class="btn-round" onclick="change('weight', 2.5)">+</button>
-        </div>
+    <label>Вес (кг)</label>
+    <div class="counter-row">
+        <button class="btn-step" onclick="step('weight', -2.5)">-</button>
+        <input type="number" id="weight" value="50" style="margin:0; border:none; text-align:center;">
+        <button class="btn-step" onclick="step('weight', 2.5)">+</button>
     </div>
 
-    <div class="input-group">
-        <label>Повторения</label>
-        <div class="counter-group">
-            <button class="btn-round" onclick="change('reps', -1)">-</button>
-            <input type="number" id="reps" value="10">
-            <button class="btn-round" onclick="change('reps', 1)">+</button>
-        </div>
+    <label>Повторения</label>
+    <div class="counter-row">
+        <button class="btn-step" onclick="step('reps', -1)">-</button>
+        <input type="number" id="reps" value="10" style="margin:0; border:none; text-align:center;">
+        <button class="btn-step" onclick="step('reps', 1)">+</button>
     </div>
 
-    <button class="main-btn" onclick="sendData()">СОХРАНИТЬ ПОДХОД</button>
+    <button class="btn-main" onclick="send()">СОХРАНИТЬ РЕЗУЛЬТАТ</button>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    let currentDay = 1;
     let currentSet = 1;
+    let sessionSets = 0;
+    let sessionVol = 0;
 
-    function setDay(day) {
-        currentDay = day;
-        updateUI('day-selector', day - 1);
+    // Загрузка списка упражнений из памяти
+    function loadExercises() {
+        const list = JSON.parse(localStorage.getItem('myExercises') || '["Жим лежа", "Приседания", "Тяга"]');
+        const datalist = document.getElementById('ex-list');
+        datalist.innerHTML = '';
+        list.forEach(ex => {
+            let opt = document.createElement('option');
+            opt.value = ex;
+            datalist.appendChild(opt);
+        });
     }
 
-    function setSet(set) {
-        currentSet = set;
-        updateUI('set-selector', set - 1);
-    }
-
-    function updateUI(containerId, activeIndex) {
-        let items = document.getElementById(containerId).getElementsByClassName('selector-item');
-        for (let i = 0; i < items.length; i++) {
-            items[i].classList.remove('active');
+    function saveExToList(val) {
+        if (!val) return;
+        let list = JSON.parse(localStorage.getItem('myExercises') || '[]');
+        if (!list.includes(val)) {
+            list.push(val);
+            localStorage.setItem('myExercises', JSON.stringify(list));
+            loadExercises();
         }
-        items[activeIndex].classList.add('active');
+    }
+
+    function setSet(n) {
+        currentSet = n;
+        let items = document.querySelectorAll('#set-selector .selector-item');
+        items.forEach((it, idx) => it.classList.toggle('active', idx === n-1));
         tg.HapticFeedback.selectionChanged();
     }
 
-    function change(id, delta) {
-        let input = document.getElementById(id);
-        input.value = (parseFloat(input.value) + delta).toFixed(1);
+    function step(id, val) {
+        let el = document.getElementById(id);
+        el.value = (parseFloat(el.value) + val).toFixed(1);
         tg.HapticFeedback.impactOccurred('light');
     }
 
-    function sendData() {
-        let data = {
-            day: currentDay,
-            ex: document.getElementById("exercise").value || "Без названия",
-            set: currentSet,
-            w: document.getElementById("weight").value,
-            r: document.getElementById("reps").value
-        };
+    function send() {
+        const ex = document.getElementById('ex-input').value;
+        const w = parseFloat(document.getElementById('weight').value);
+        const r = parseInt(document.getElementById('reps').value);
+
+        if (!ex) { tg.showAlert("Введите название упражнения!"); return; }
+
+        // Обновляем статистику в интерфейсе
+        sessionSets++;
+        sessionVol += (w * r);
+        document.getElementById('total-sets').innerText = sessionSets;
+        document.getElementById('total-vol').innerText = Math.round(sessionVol);
+
+        const data = { ex, w, r, set: currentSet };
         tg.sendData(JSON.stringify(data));
+        
+        // Авто-переключение на следующий подход для удобства
+        if(currentSet < 5) setSet(currentSet + 1);
     }
+
+    window.onload = loadExercises;
 </script>
 </body>
 </html>
