@@ -36,7 +36,7 @@
         
         .ex-block { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--accent-color); }
         .ex-title { font-weight: bold; margin-bottom: 10px; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .record-badge { font-size: 11px; background: rgba(255, 215, 0, 0.15); color: var(--gold); padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3); }
+        .record-badge { font-size: 11px; background: rgba(255, 215, 0, 0.15); color: var(--gold); padding: 4px 10px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3); }
         
         .set-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05); font-size: 15px; }
         .del-btn { color: var(--error); background: none; border: none; font-size: 22px; padding: 0 5px; cursor: pointer; line-height: 1; }
@@ -85,8 +85,8 @@
     let selDate = new Date().toISOString().split('T')[0];
     let curSet = 1;
 
-    function getStore() { return JSON.parse(localStorage.getItem('gym_v6') || '{}'); }
-    function setStore(data) { localStorage.setItem('gym_v6', JSON.stringify(data)); }
+    function getStore() { return JSON.parse(localStorage.getItem('gym_v7') || '{}'); }
+    function setStore(data) { localStorage.setItem('gym_v7', JSON.stringify(data)); }
 
     function setNum(n) {
         curSet = n;
@@ -148,13 +148,20 @@
             if(!day) continue;
             empty = false;
 
-            // 1. Рекорд за все время (макс. вес)
-            let maxWeight = 0;
+            // 1. Поиск рекорда (макс вес и его повторы)
+            let bestW = 0;
+            let bestR = 0;
             data[name].forEach(d => {
-                d.sets.forEach(s => { if(s.w > maxWeight) maxWeight = s.w; });
+                d.sets.forEach(s => {
+                    if(s.w > bestW) {
+                        bestW = s.w;
+                        bestR = s.r;
+                    } else if(s.w === bestW && s.r > bestR) {
+                        bestR = s.r;
+                    }
+                });
             });
 
-            // 2. Прошлая тренировка (самая свежая до текущей даты)
             const prev = data[name]
                 .filter(d => d.date < selDate)
                 .sort((a,b) => b.date.localeCompare(a.date))[0];
@@ -163,7 +170,7 @@
                 <div class="ex-block">
                     <div class="ex-title">
                         ${name}
-                        <span class="record-badge">Рекорд: ${maxWeight}кг</span>
+                        <span class="record-badge">${bestW}кг х ${bestR} рекорд</span>
                     </div>`;
 
             day.sets.forEach(s => {
