@@ -14,54 +14,32 @@
             --hint-color: var(--tg-theme-hint-color, #707070);
             --success: #31b545;
             --gold: #ffd700;
+            --error: #e53935;
         }
-
         body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; padding-bottom: 80px; }
         .card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
-        h2 { margin-top: 0; font-size: 18px; color: var(--accent-color); text-align: center; padding-top: 15px; }
+        h2 { margin-top: 0; font-size: 18px; color: var(--accent-color); text-align: center; padding-top: 10px; }
         label { display: block; font-size: 11px; color: var(--hint-color); text-transform: uppercase; margin: 10px 15px 5px; }
-        
-        input { 
-            width: calc(100% - 30px); margin: 0 15px 10px; padding: 12px; 
-            border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); 
-            background: rgba(0,0,0,0.2); color: white; font-size: 16px; box-sizing: border-box; 
-        }
-
-        .date-selector-trigger { 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 10px; padding: 12px; margin: 0 15px 10px; 
-            display: flex; justify-content: space-between; cursor: pointer; 
-        }
-
+        input { width: calc(100% - 30px); margin: 0 15px 10px; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; font-size: 16px; box-sizing: border-box; }
+        .date-selector-trigger { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; margin: 0 15px 10px; display: flex; justify-content: space-between; cursor: pointer; }
         .calendar-dropdown { max-height: 0; overflow: hidden; transition: 0.3s; background: rgba(0,0,0,0.3); margin: 0 15px; border-radius: 10px; }
         .calendar-dropdown.open { max-height: 300px; margin-bottom: 15px; border: 1px solid var(--accent-color); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; padding: 10px; text-align: center; }
         .day { padding: 8px 0; font-size: 13px; border-radius: 50%; cursor: pointer; }
         .day.selected { background: var(--accent-color); color: white; }
         .day.has-workout { box-shadow: inset 0 0 0 2px var(--success); }
-
         .selector { display: flex; gap: 8px; margin: 0 15px 15px; overflow-x: auto; }
-        .sel-item { 
-            min-width: 44px; height: 44px; background: rgba(255,255,255,0.05); 
-            border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; 
-        }
+        .sel-item { min-width: 44px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
         .sel-item.active { background: var(--accent-color); }
-
-        .btn-main { 
-            width: calc(100% - 30px); margin: 0 15px 15px; padding: 15px; 
-            border-radius: 12px; border: none; background: var(--accent-color); 
-            color: white; font-size: 16px; font-weight: bold; 
-        }
-
-        .last-info-text { font-size: 11px; color: var(--gold); margin: -5px 15px 10px; display: block; }
-
+        .btn-main { width: calc(100% - 30px); margin: 0 15px 15px; padding: 15px; border-radius: 12px; border: none; background: var(--accent-color); color: white; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .last-info-text { font-size: 12px; color: var(--gold); margin: -5px 15px 10px; display: block; font-weight: bold; }
         .ex-block { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; margin-bottom: 10px; border-left: 4px solid var(--accent-color); }
-        .ex-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-        .set-line { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; border-top: 1px solid rgba(255,255,255,0.05); }
-        
-        .best-session-box { margin-top: 10px; padding: 8px; background: rgba(255, 215, 0, 0.05); border-radius: 8px; font-size: 11px; border: 1px solid rgba(255, 215, 0, 0.1); color: #ccc; }
-        .diff-tag { font-size: 10px; padding: 3px 7px; border-radius: 5px; font-weight: bold; text-transform: uppercase; }
-        .diff-plus { background: rgba(255, 215, 0, 0.2); color: var(--gold); }
+        .ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .set-line { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+        .delete-btn { color: var(--error); background: none; border: none; font-size: 18px; padding: 0 5px; cursor: pointer; opacity: 0.6; }
+        .delete-btn:hover { opacity: 1; }
+        .record-info { font-size: 11px; color: var(--hint-color); }
+        .best-session-box { margin-top: 10px; padding: 8px; background: rgba(255, 215, 0, 0.05); border-radius: 8px; font-size: 11px; border: 1px solid rgba(255, 215, 0, 0.1); color: var(--gold); }
     </style>
 </head>
 <body>
@@ -77,11 +55,11 @@
     </div>
 
     <label>Упражнение</label>
-    <input type="text" id="ex-name" placeholder="Название..." list="ex-list" oninput="showBestResult(this.value)">
+    <input type="text" id="ex-name" placeholder="Жим, Присед..." list="ex-list" oninput="showBestResult(this.value)">
     <datalist id="ex-list"></datalist>
     <span id="last-info" class="last-info-text"></span>
 
-    <label>Подход</label>
+    <label>Подход №</label>
     <div class="selector" id="set-selector">
         <div class="sel-item active" onclick="setNum(1)">1</div>
         <div class="sel-item" onclick="setNum(2)">2</div>
@@ -91,7 +69,7 @@
     </div>
 
     <div style="display:flex;">
-        <div style="flex:1"><label>Вес</label><input type="number" id="weight" value="50" step="0.5"></div>
+        <div style="flex:1"><label>Вес (кг)</label><input type="number" id="weight" value="50" step="0.5"></div>
         <div style="flex:1"><label>Повторы</label><input type="number" id="reps" value="10"></div>
     </div>
 
@@ -108,7 +86,6 @@
 
     function calculate1RM(w, r) { return (r <= 1) ? w : w * (1 + r / 30); }
     function getHistory() { return JSON.parse(localStorage.getItem('gym_v2_history') || '{}'); }
-
     function toggleCalendar() { document.getElementById('calendar-dropdown').classList.toggle('open'); }
 
     function renderCalendar() {
@@ -121,7 +98,11 @@
             const div = document.createElement('div');
             div.className = 'day' + (selectedDate.toISOString().split('T')[0] === dStr ? ' selected' : '') + (hasWorkout(dStr) ? ' has-workout' : '');
             div.innerText = d.getDate();
-            div.onclick = () => { selectedDate = d; document.getElementById('display-date').innerText = dStr === todayStr ? 'Сегодня' : d.toLocaleDateString(); renderCalendar(); renderWorkout(dStr); toggleCalendar(); };
+            div.onclick = () => { 
+                selectedDate = d; 
+                document.getElementById('display-date').innerText = dStr === todayStr ? 'Сегодня' : d.toLocaleDateString(); 
+                renderCalendar(); renderWorkout(dStr); toggleCalendar(); 
+            };
             container.appendChild(div);
         }
     }
@@ -134,10 +115,10 @@
 
     function showBestResult(name) {
         const info = document.getElementById('last-info');
-        const h = getHistory()[name];
+        const h = getHistory()[name.trim()];
         if (h && h.length > 0) {
             let max = 0; h.forEach(s => s.sets.forEach(x => { let m = calculate1RM(x.w, x.r); if(m > max) max = m; }));
-            info.innerText = `Рекордный 1ПМ: ${max.toFixed(1)}кг`;
+            info.innerText = `Твой рекорд: ${max.toFixed(1)} кг`;
         } else info.innerText = "";
     }
 
@@ -151,25 +132,40 @@
         const w = parseFloat(document.getElementById('weight').value);
         const r = parseInt(document.getElementById('reps').value);
         const dStr = selectedDate.toISOString().split('T')[0];
-        if (!name) return;
+        if (!name || isNaN(w) || isNaN(r)) return;
 
         let h = getHistory();
         if (!h[name]) h[name] = [];
         let s = h[name].find(x => x.rawDate === dStr);
         
-        if (s) s.sets.push({w, r, n: currentSetNum});
-        else h[name].push({rawDate: dStr, date: selectedDate.toLocaleDateString(), sets: [{w, r, n: currentSetNum}]});
+        const newSet = {w, r, n: currentSetNum, id: Date.now()};
+        if (s) s.sets.push(newSet);
+        else h[name].push({rawDate: dStr, date: selectedDate.toLocaleDateString(), sets: [newSet]});
         
         localStorage.setItem('gym_v2_history', JSON.stringify(h));
         if (currentSetNum < 5) setNum(currentSetNum + 1);
         renderWorkout(dStr);
         renderCalendar();
-        tg.HapticFeedback.notificationOccurred('success');
+        tg.HapticFeedback.impactOccurred('medium');
+    }
+
+    function deleteSet(name, dStr, setId) {
+        let h = getHistory();
+        let session = h[name].find(x => x.rawDate === dStr);
+        if (session) {
+            session.sets = session.sets.filter(s => s.id !== setId);
+            if (session.sets.length === 0) h[name] = h[name].filter(x => x.rawDate !== dStr);
+            if (h[name].length === 0) delete h[name];
+            localStorage.setItem('gym_v2_history', JSON.stringify(h));
+            renderWorkout(dStr);
+            renderCalendar();
+            tg.HapticFeedback.notificationOccurred('warning');
+        }
     }
 
     function renderWorkout(dStr) {
         const container = document.getElementById('workout-container');
-        container.innerHTML = `<h2 style="color:var(--accent-color)">Тренировка: ${dStr}</h2>`;
+        container.innerHTML = `<h2 style="color:var(--accent-color)">Записи за ${dStr === todayStr ? 'сегодня' : dStr}</h2>`;
         const h = getHistory();
         let found = false;
 
@@ -179,28 +175,28 @@
             found = true;
 
             const otherSessions = h[name].filter(x => x.rawDate !== dStr);
-            let best1RM = 0;
-            otherSessions.forEach(os => os.sets.forEach(st => { let m = calculate1RM(st.w, st.r); if(m > best1RM) best1RM = m; }));
+            let bestPrev = 0;
+            otherSessions.forEach(os => os.sets.forEach(st => { let m = calculate1RM(st.w, st.r); if(m > bestPrev) bestPrev = m; }));
             
-            let currentMax = Math.max(...session.sets.map(x => calculate1RM(x.w, x.r)));
-            let isRecord = best1RM > 0 && currentMax > best1RM;
-
             container.innerHTML += `
                 <div class="ex-block">
                     <div class="ex-header">
                         <b>${name}</b>
-                        ${isRecord ? '<span class="diff-tag diff-plus">НОВЫЙ РЕКОРД 🔥</span>' : ''}
+                        <span class="record-info">Вес на 1 раз</span>
                     </div>
                     ${session.sets.map(x => `
                         <div class="set-line">
-                            <span>Сет ${x.n || '?'}: ${x.w}кг x ${x.r}</span>
-                            <span style="color:var(--hint-color)">1ПМ: ${calculate1RM(x.w, x.r).toFixed(1)}</span>
+                            <span>Сет ${x.n}: ${x.w}кг x ${x.r}</span>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="color:var(--hint-color); font-size:12px;">Рекорд: ${calculate1RM(x.w, x.r).toFixed(1)}</span>
+                                <button class="delete-btn" onclick="deleteSet('${name}', '${dStr}', ${x.id})">×</button>
+                            </div>
                         </div>
                     `).join('')}
-                    ${best1RM > 0 ? `<div class="best-session-box">Лучший 1ПМ до этого: ${best1RM.toFixed(1)}кг</div>` : ''}
+                    ${bestPrev > 0 ? `<div class="best-session-box">Лучший результат до этого дня: ${bestPrev.toFixed(1)} кг</div>` : ''}
                 </div>`;
         }
-        if(!found) container.innerHTML += '<p style="text-align:center; color:var(--hint-color)">Нет записей за эту дату</p>';
+        if(!found) container.innerHTML += '<p style="text-align:center; color:var(--hint-color)">Пока пусто</p>';
     }
 
     window.onload = () => {
