@@ -16,49 +16,58 @@
             --gold: #ffd700;
             --error: #e53935;
         }
-        body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; padding-bottom: 80px; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; }
         .card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
-        h2 { margin-top: 0; font-size: 18px; color: var(--accent-color); text-align: center; }
+        h2 { margin-top: 0; font-size: 18px; color: var(--accent-color); text-align: center; padding: 10px 0; }
         
         label { display: block; font-size: 11px; color: var(--hint-color); text-transform: uppercase; margin: 10px 0 5px; padding-left: 5px; }
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
+        input:focus { border-color: var(--accent-color); }
         
-        /* Выбор даты */
-        .date-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; cursor: pointer; margin-bottom: 15px; }
+        /* Календарь */
+        .calendar-trigger { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; cursor: pointer; margin-bottom: 10px; }
+        .calendar-grid { display: none; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #222; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--accent-color); }
+        .calendar-grid.show { display: grid; }
+        .day { padding: 8px 0; text-align: center; font-size: 13px; border-radius: 8px; cursor: pointer; }
+        .day.today { color: var(--accent-color); font-weight: bold; }
+        .day.selected { background: var(--accent-color); color: white; }
+        .day.has-data { border-bottom: 2px solid var(--success); }
+
+        /* Подходы */
+        .selector { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding: 5px 0; }
+        .sel-item { min-width: 44px; height: 44px; background: rgba(255,255,255,0.08); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
+        .sel-item.active { background: var(--accent-color); color: white; }
+
+        .btn-main { width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--accent-color); color: white; font-size: 16px; font-weight: bold; cursor: pointer; }
         
-        /* Селектор подходов */
-        .selector { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .sel-item { min-width: 44px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 1px solid transparent; }
-        .sel-item.active { background: var(--accent-color); border-color: white; }
-
-        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--accent-color); color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); }
-
-        /* Списки упражнений */
+        /* Список */
         .ex-block { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--accent-color); }
-        .ex-header { font-weight: bold; font-size: 17px; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .set-line { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+        .ex-title { font-weight: bold; margin-bottom: 10px; font-size: 16px; display: flex; justify-content: space-between; }
+        .set-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
         
-        .delete-btn { color: var(--error); background: rgba(229, 57, 51, 0.1); border: none; border-radius: 6px; padding: 5px 10px; font-size: 16px; cursor: pointer; }
-        .record-tag { font-size: 11px; color: var(--gold); background: rgba(255, 214, 0, 0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
-        
-        .best-prev { font-size: 12px; color: var(--hint-color); margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); }
-        .best-prev b { color: var(--gold); }
+        .res-tag { font-size: 11px; color: var(--gold); margin-left: 5px; opacity: 0.9; }
+        .del-btn { color: var(--error); background: none; border: none; font-size: 20px; padding: 0 10px; cursor: pointer; }
+        .history-best { font-size: 12px; color: var(--hint-color); margin-top: 10px; border-top: 1px dashed #333; padding-top: 8px; }
+        .history-best b { color: var(--gold); }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="date-btn" id="date-display" onclick="changeDate()">
-        <span>📅 Дата: <b id="current-date">Сегодня</b></span>
+    <h2>Дневник тренировок</h2>
+    
+    <div class="calendar-trigger" onclick="document.getElementById('cal').classList.toggle('show')">
+        <span>📅 Дата: <b id="date-str">Сегодня</b></span>
+        <span>▼</span>
     </div>
+    <div class="calendar-grid" id="cal"></div>
 
     <label>Упражнение</label>
-    <input type="text" id="ex-name" placeholder="Жим штанги, Присед..." list="ex-list">
+    <input type="text" id="ex-name" placeholder="Название (например: Жим)" list="ex-list" autocomplete="off">
     <datalist id="ex-list"></datalist>
 
-    <label>Номер подхода</label>
-    <div class="selector" id="set-selector">
+    <label>Подход</label>
+    <div class="selector">
         <div class="sel-item active" onclick="setNum(1)">1</div>
         <div class="sel-item" onclick="setNum(2)">2</div>
         <div class="sel-item" onclick="setNum(3)">3</div>
@@ -67,48 +76,41 @@
     </div>
 
     <div style="display:flex; gap:10px;">
-        <div style="flex:1">
-            <label>Вес (кг)</label>
-            <input type="number" id="weight" value="50" step="0.5">
-        </div>
-        <div style="flex:1">
-            <label>Повторы</label>
-            <input type="number" id="reps" value="10">
-        </div>
+        <div style="flex:1"><label>Вес</label><input type="number" id="weight" value="60" step="0.5"></div>
+        <div style="flex:1"><label>Повторы</label><input type="number" id="reps" value="10"></div>
     </div>
 
     <button class="btn-main" onclick="addSet()">ДОБАВИТЬ В ЖУРНАЛ</button>
 </div>
 
-<div id="workout-list"></div>
+<div id="log"></div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    let selectedDate = new Date().toISOString().split('T')[0];
-    let currentSetNum = 1;
+    let selDate = new Date().toISOString().split('T')[0];
+    let curSet = 1;
 
-    // Считаем лучший результат (коэффициент силы)
-    function calcRecord(w, r) {
-        return r <= 1 ? w : parseFloat((w * (1 + r / 30)).toFixed(1));
-    }
-
-    function getHistory() {
-        return JSON.parse(localStorage.getItem('gym_v3_history') || '{}');
-    }
+    function getStore() { return JSON.parse(localStorage.getItem('gym_v4') || '{}'); }
+    function setStore(data) { localStorage.setItem('gym_v4', JSON.stringify(data)); }
+    function calc(w, r) { return r <= 1 ? w : Math.round(w * (1 + r / 30) * 10) / 10; }
 
     function setNum(n) {
-        currentSetNum = n;
-        document.querySelectorAll('.sel-item').forEach((el, i) => {
-            el.classList.toggle('active', i === n - 1);
-        });
+        curSet = n;
+        document.querySelectorAll('.sel-item').forEach((el, i) => el.classList.toggle('active', i === n-1));
     }
 
-    function changeDate() {
-        const newDate = prompt("Введите дату (ГГГГ-ММ-ДД):", selectedDate);
-        if (newDate) {
-            selectedDate = newDate;
-            document.getElementById('current-date').innerText = newDate;
-            render();
+    function buildCal() {
+        const grid = document.getElementById('cal');
+        grid.innerHTML = '';
+        const now = new Date();
+        for(let i = -14; i <= 7; i++) {
+            const d = new Date(); d.setDate(now.getDate() + i);
+            const s = d.toISOString().split('T')[0];
+            const div = document.createElement('div');
+            div.className = 'day' + (s === selDate ? ' selected' : '') + (s === now.toISOString().split('T')[0] ? ' today' : '');
+            div.innerText = d.getDate();
+            div.onclick = () => { selDate = s; document.getElementById('date-str').innerText = s; document.getElementById('cal').classList.remove('show'); buildCal(); render(); };
+            grid.appendChild(div);
         }
     }
 
@@ -116,99 +118,66 @@
         const name = document.getElementById('ex-name').value.trim();
         const w = parseFloat(document.getElementById('weight').value);
         const r = parseInt(document.getElementById('reps').value);
+        if(!name || isNaN(w)) return;
 
-        if (!name || isNaN(w) || isNaN(r)) return;
-
-        let history = getHistory();
-        if (!history[name]) history[name] = [];
-
-        let session = history[name].find(s => s.date === selectedDate);
-        if (!session) {
-            session = { date: selectedDate, sets: [] };
-            history[name].push(session);
-        }
-
-        session.sets.push({ w, r, n: currentSetNum, id: Date.now() });
-        localStorage.setItem('gym_v3_history', JSON.stringify(history));
-
-        if (currentSetNum < 5) setNum(currentSetNum + 1);
+        let data = getStore();
+        if(!data[name]) data[name] = [];
+        let day = data[name].find(d => d.date === selDate);
+        if(!day) { day = {date: selDate, sets: []}; data[name].push(day); }
+        
+        day.sets.push({w, r, n: curSet, id: Date.now()});
+        setStore(data);
+        if(curSet < 5) setNum(curSet + 1);
         render();
-        tg.HapticFeedback.impactOccurred('medium');
+        tg.HapticFeedback.impactOccurred('light');
     }
 
-    function deleteSet(name, date, setId) {
-        let history = getHistory();
-        let session = history[name].find(s => s.date === date);
-        if (session) {
-            session.sets = session.sets.filter(s => s.id !== setId);
-            if (session.sets.length === 0) {
-                history[name] = history[name].filter(s => s.date !== date);
-            }
-            if (history[name].length === 0) delete history[name];
+    function delSet(name, date, id) {
+        let data = getStore();
+        let day = data[name].find(d => d.date === date);
+        if(day) {
+            day.sets = day.sets.filter(s => s.id !== id);
+            if(day.sets.length === 0) data[name] = data[name].filter(d => d.date !== date);
+            if(data[name].length === 0) delete data[name];
         }
-        localStorage.setItem('gym_v3_history', JSON.stringify(history));
+        setStore(data);
         render();
     }
 
     function render() {
-        const list = document.getElementById('workout-list');
-        const history = getHistory();
-        list.innerHTML = `<h3 style="margin-left:5px; color:var(--accent-color)">Записи за ${selectedDate}</h3>`;
+        const log = document.getElementById('log');
+        const data = getStore();
+        log.innerHTML = `<h3 style="margin: 0 0 15px 5px; font-size:16px;">Тренировка за ${selDate}:</h3>`;
         
-        let found = false;
-        for (let name in history) {
-            const session = history[name].find(s => s.date === selectedDate);
-            if (!session) continue;
-            found = true;
+        let empty = true;
+        for(let name in data) {
+            const day = data[name].find(d => d.date === selDate);
+            if(!day) continue;
+            empty = false;
 
-            // Ищем лучший результат ДО этой тренировки
-            let absoluteBest = 0;
-            history[name].forEach(s => {
-                if (s.date < selectedDate) {
-                    s.sets.forEach(st => {
-                        let res = calcRecord(st.w, st.r);
-                        if (res > absoluteBest) absoluteBest = res;
-                    });
-                }
+            let best = 0;
+            data[name].forEach(d => {
+                if(d.date < selDate) d.sets.forEach(s => { let v = calc(s.w, s.r); if(v > best) best = v; });
             });
 
-            let html = `
-                <div class="ex-block">
-                    <div class="ex-header">${name}</div>
-            `;
-
-            session.sets.forEach(set => {
-                let currentRes = calcRecord(set.w, set.reps || set.r);
+            let html = `<div class="ex-block"><div class="ex-title">${name}</div>`;
+            day.sets.forEach(s => {
                 html += `
-                    <div class="set-line">
-                        <div>
-                            <b>Сет ${set.n}:</b> ${set.w}кг × ${set.r} 
-                            <span class="record-tag">Твой результат: ${currentRes}кг</span>
-                        </div>
-                        <button class="delete-btn" onclick="deleteSet('${name}', '${selectedDate}', ${set.id})">✕</button>
-                    </div>
-                `;
+                <div class="set-row">
+                    <div><b>Сет ${s.n}:</b> ${s.w}кг × ${s.r} <span class="res-tag">Результат: ${calc(s.w, s.r)}</span></div>
+                    <button class="del-btn" onclick="delSet('${name}', '${selDate}', ${s.id})">×</button>
+                </div>`;
             });
-
-            if (absoluteBest > 0) {
-                html += `<div class="best-prev">Лучший результат до этого: <b>${absoluteBest} кг</b></div>`;
-            }
-
-            html += `</div>`;
-            list.innerHTML += html;
+            if(best > 0) html += `<div class="history-best">Лучший результат до этого дня: <b>${best} кг</b></div>`;
+            log.innerHTML += html + `</div>`;
         }
-
-        if (!found) list.innerHTML += '<p style="text-align:center; color:var(--hint-color)">Нет записей за этот день</p>';
+        if(empty) log.innerHTML += '<p style="text-align:center; color:var(--hint-color)">Записей нет</p>';
         
-        // Обновляем список подсказок
         const dl = document.getElementById('ex-list');
-        dl.innerHTML = Object.keys(history).map(n => `<option value="${n}">`).join('');
+        dl.innerHTML = Object.keys(data).map(n => `<option value="${n}">`).join('');
     }
 
-    window.onload = () => {
-        render();
-        tg.expand();
-    };
+    window.onload = () => { buildCal(); render(); tg.expand(); };
 </script>
 </body>
 </html>
