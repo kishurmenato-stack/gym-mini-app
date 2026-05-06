@@ -13,6 +13,7 @@
             --accent-color: #3390ec;
             --hint-color: #707070;
             --gold: #ffd700;
+            --success: #4caf50;
             --error: #e53935;
         }
         body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; padding-bottom: 80px; -webkit-tap-highlight-color: transparent; }
@@ -22,17 +23,29 @@
         label { display: block; font-size: 11px; color: var(--hint-color); text-transform: uppercase; margin: 10px 0 5px; padding-left: 5px; }
         input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; outline: none; }
         
-        /* Календарь-сетка */
         .calendar-trigger { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; cursor: pointer; margin-bottom: 10px; }
-        .calendar-container { display: none; background: #222; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--accent-color); }
+        .calendar-container { display: none; background: #1a1a1a; padding: 10px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
         .calendar-container.show { display: block; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
-        .weekday { font-size: 10px; color: var(--hint-color); padding-bottom: 5px; }
-        .day { padding: 10px 0; font-size: 14px; border-radius: 8px; cursor: pointer; position: relative; }
-        .day.other-month { opacity: 0.2; }
-        .day.selected { background: var(--accent-color); color: white; }
-        .day.has-data::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--success); border-radius: 50%; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .weekday { font-size: 10px; color: var(--hint-color); padding: 5px 0; text-align: center; }
+        
+        .day { 
+            aspect-ratio: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 14px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .day.other-month { opacity: 0.1; pointer-events: none; }
+        .day.selected { background: var(--accent-color) !important; color: white; border-color: var(--accent-color); }
+        /* Тот самый зеленый кружок вокруг числа */
+        .day.has-data { border-color: var(--success); }
+        
         .nav-btn { background: none; border: none; color: var(--accent-color); font-size: 20px; padding: 5px 15px; cursor: pointer; }
 
         .selector { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding: 5px 0; }
@@ -42,44 +55,38 @@
         .btn-main { width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--accent-color); color: white; font-size: 16px; font-weight: bold; cursor: pointer; }
         
         .ex-block { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--accent-color); }
-        .ex-title { font-weight: bold; margin-bottom: 10px; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .record-badge { font-size: 11px; background: rgba(255, 215, 0, 0.15); color: var(--gold); padding: 4px 10px; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3); }
+        .ex-title { font-weight: bold; margin-bottom: 10px; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .record-badge { font-size: 10px; color: var(--gold); border: 1px solid rgba(255,215,0,0.3); padding: 2px 6px; border-radius: 6px; }
         
-        .set-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05); font-size: 15px; }
-        .del-btn { color: var(--error); background: none; border: none; font-size: 22px; padding: 0 5px; cursor: pointer; line-height: 1; }
+        .set-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+        .del-btn { color: var(--error); background: none; border: none; font-size: 20px; cursor: pointer; }
         
-        .history-box { font-size: 12px; margin-top: 10px; border-top: 1px dashed #333; padding-top: 10px; }
-        .history-label { color: var(--hint-color); margin-bottom: 4px; display: block; }
-        .history-val { color: #fff; font-weight: 500; }
+        .history-box { font-size: 11px; margin-top: 8px; color: var(--hint-color); padding-top: 8px; border-top: 1px dashed #333; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Дневник тренировок</h2>
-    
     <div class="calendar-trigger" onclick="toggleCalendar()">
-        <span>📅 Дата: <b id="date-str">Сегодня</b></span>
+        <span>📅 <b id="date-str">Выбрать дату</b></span>
         <span>▼</span>
     </div>
     
     <div class="calendar-container" id="calendar-view">
         <div class="calendar-header">
             <button class="nav-btn" onclick="changeMonth(-1)">❮</button>
-            <b id="month-name">Май 2024</b>
+            <b id="month-name"></b>
             <button class="nav-btn" onclick="changeMonth(1)">❯</button>
         </div>
-        <div class="calendar-grid" id="calendar-grid">
-            <!-- Дни недели и числа генерируются JS -->
-        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
     </div>
 
     <label>Упражнение</label>
-    <input type="text" id="ex-name" placeholder="Название..." list="ex-list" autocomplete="off">
+    <input type="text" id="ex-name" placeholder="Нажми для выбора..." list="ex-list">
     <datalist id="ex-list"></datalist>
 
     <label>Подход</label>
-    <div class="selector">
+    <div class="selector" id="set-selector">
         <div class="sel-item active" onclick="setNum(1)">1</div>
         <div class="sel-item" onclick="setNum(2)">2</div>
         <div class="sel-item" onclick="setNum(3)">3</div>
@@ -88,25 +95,33 @@
     </div>
 
     <div style="display:flex; gap:10px;">
-        <div style="flex:1"><label>Вес (кг)</label><input type="number" id="weight" value="60" step="0.5"></div>
+        <div style="flex:1"><label>Вес</label><input type="number" id="weight" value="60"></div>
         <div style="flex:1"><label>Повторы</label><input type="number" id="reps" value="10"></div>
     </div>
 
-    <button class="btn-main" onclick="addSet()">ДОБАВИТЬ В ЖУРНАЛ</button>
+    <button class="btn-main" onclick="addSet()">СОХРАНИТЬ ПОДХОД</button>
 </div>
 
 <div id="log"></div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    let selDate = new Date().toISOString().split('T')[0];
-    let viewDate = new Date(); // Дата для отображения в календаре
+    const DB_NAME = 'gym_v8_stable'; // Новая версия для чистоты данных
+    
+    // Исправление бага с датой: берем локальную дату в формате YYYY-MM-DD
+    const getTodayStr = (date = new Date()) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    };
+
+    let selDate = getTodayStr();
+    let viewDate = new Date();
     let curSet = 1;
 
-    const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
-
-    function getStore() { return JSON.parse(localStorage.getItem('gym_v7') || '{}'); }
-    function setStore(data) { localStorage.setItem('gym_v7', JSON.stringify(data)); }
+    function getStore() { return JSON.parse(localStorage.getItem(DB_NAME) || '{}'); }
+    function setStore(data) { localStorage.setItem(DB_NAME, JSON.stringify(data)); }
 
     function toggleCalendar() { document.getElementById('calendar-view').classList.toggle('show'); }
 
@@ -117,41 +132,33 @@
 
     function renderCalendar() {
         const grid = document.getElementById('calendar-grid');
-        const monthLabel = document.getElementById('month-name');
         const data = getStore();
-        
         grid.innerHTML = '';
-        monthLabel.innerText = `${months[viewDate.getMonth()]} ${viewDate.getFullYear()}`;
-
-        ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].forEach(d => {
-            grid.innerHTML += `<div class="weekday">${d}</div>`;
-        });
-
-        const firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
-        const lastDay = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0);
         
-        let startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
+        const mNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+        document.getElementById('month-name').innerText = `${mNames[viewDate.getMonth()]} ${viewDate.getFullYear()}`;
 
-        // Пустые клетки прошлого месяца
-        for (let i = 0; i < startOffset; i++) {
-            grid.innerHTML += `<div class="day other-month"></div>`;
-        }
+        ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].forEach(d => grid.innerHTML += `<div class="weekday">${d}</div>`);
 
-        // Дни текущего месяца
-        for (let i = 1; i <= lastDay.getDate(); i++) {
-            const dateObj = new Date(viewDate.getFullYear(), viewDate.getMonth(), i);
-            const dateStr = dateObj.toISOString().split('T')[0];
+        const first = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
+        const last = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0);
+        let startDay = first.getDay() === 0 ? 6 : first.getDay() - 1;
+
+        for (let i = 0; i < startDay; i++) grid.innerHTML += `<div class="day other-month"></div>`;
+
+        for (let i = 1; i <= last.getDate(); i++) {
+            const currentLoopDate = getTodayStr(new Date(viewDate.getFullYear(), viewDate.getMonth(), i));
             
             let hasData = false;
             for (let ex in data) {
-                if (data[ex].find(d => d.date === dateStr)) hasData = true;
+                if (data[ex].some(d => d.date === currentLoopDate)) hasData = true;
             }
 
             const div = document.createElement('div');
-            div.className = 'day' + (dateStr === selDate ? ' selected' : '') + (hasData ? ' has-data' : '');
+            div.className = `day ${currentLoopDate === selDate ? 'selected' : ''} ${hasData ? 'has-data' : ''}`;
             div.innerText = i;
             div.onclick = () => {
-                selDate = dateStr;
+                selDate = currentLoopDate;
                 document.getElementById('date-str').innerText = selDate;
                 toggleCalendar();
                 renderCalendar();
@@ -179,83 +186,50 @@
         
         day.sets.push({w: parseFloat(w), r: parseInt(r), n: curSet, id: Date.now()});
         setStore(data);
+        
         if(curSet < 5) setNum(curSet + 1);
         renderCalendar();
         render();
-        tg.HapticFeedback.impactOccurred('light');
-    }
-
-    function delSet(name, date, id) {
-        let data = getStore();
-        let day = data[name].find(d => d.date === date);
-        if(day) {
-            day.sets = day.sets.filter(s => s.id !== id);
-            if(day.sets.length === 0) data[name] = data[name].filter(d => d.date !== date);
-            if(data[name].length === 0) delete data[name];
-        }
-        setStore(data);
-        renderCalendar();
-        render();
+        tg.HapticFeedback.notificationOccurred('success');
     }
 
     function render() {
         const log = document.getElementById('log');
         const data = getStore();
-        log.innerHTML = `<h3 style="margin: 0 0 15px 5px; font-size:15px; color:var(--hint-color)">Записи за ${selDate}:</h3>`;
+        document.getElementById('date-str').innerText = selDate;
+        log.innerHTML = '';
         
-        let empty = true;
+        let found = false;
         for(let name in data) {
             const day = data[name].find(d => d.date === selDate);
             if(!day) continue;
-            empty = false;
+            found = true;
 
-            let bestW = 0;
-            let bestR = 0;
-            data[name].forEach(d => {
-                d.sets.forEach(s => {
-                    if(s.w > bestW) {
-                        bestW = s.w;
-                        bestR = s.r;
-                    } else if(s.w === bestW && s.r > bestR) {
-                        bestR = s.r;
-                    }
-                });
-            });
+            let bestW = 0, bestR = 0;
+            data[name].forEach(d => d.sets.forEach(s => {
+                if(s.w > bestW || (s.w === bestW && s.r > bestR)) { bestW = s.w; bestR = s.r; }
+            }));
 
-            const prev = data[name]
-                .filter(d => d.date < selDate)
-                .sort((a,b) => b.date.localeCompare(a.date))[0];
+            const prev = data[name].filter(d => d.date < selDate).sort((a,b) => b.date.localeCompare(a.date))[0];
 
-            let html = `
-                <div class="ex-block">
-                    <div class="ex-title">
-                        ${name}
-                        <span class="record-badge">${bestW}кг х ${bestR} рекорд</span>
-                    </div>`;
-
+            let html = `<div class="ex-block"><div class="ex-title">${name} <span class="record-badge">${bestW}кг х ${bestR} рекорд</span></div>`;
             day.sets.forEach(s => {
-                html += `
-                <div class="set-row">
-                    <span><b>Сет ${s.n}:</b> ${s.w}кг × ${s.r}</span>
-                    <button class="del-btn" onclick="delSet('${name}', '${selDate}', ${s.id})">×</button>
-                </div>`;
+                html += `<div class="set-row"><span>Сет ${s.n}: <b>${s.w}кг × ${s.r}</b></span><button class="del-btn" onclick="delSet('${name}','${s.id}')">×</button></div>`;
             });
-            
-            if(prev) {
-                const pSets = prev.sets.map(ps => `${ps.w}×${ps.r}`).join(', ');
-                html += `
-                <div class="history-box">
-                    <span class="history-label">Прошлый раз (${prev.date}):</span>
-                    <span class="history-val">${pSets}</span>
-                </div>`;
-            }
-
+            if(prev) html += `<div class="history-box">Прошлый раз: ${prev.sets.map(ps => ps.w+'×'+ps.r).join(', ')}</div>`;
             log.innerHTML += html + `</div>`;
         }
-        if(empty) log.innerHTML += '<p style="text-align:center; color:var(--hint-color); margin-top:20px;">Нет тренировок</p>';
+        if(!found) log.innerHTML = '<p style="text-align:center; color:var(--hint-color)">Нет записей за этот день</p>';
         
         const dl = document.getElementById('ex-list');
         dl.innerHTML = Object.keys(data).map(n => `<option value="${n}">`).join('');
+    }
+
+    function delSet(name, id) {
+        let data = getStore();
+        data[name] = data[name].map(d => ({...d, sets: d.sets.filter(s => s.id != id)})).filter(d => d.sets.length > 0);
+        if(!data[name].length) delete data[name];
+        setStore(data); renderCalendar(); render();
     }
 
     window.onload = () => { renderCalendar(); render(); tg.expand(); };
