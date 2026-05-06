@@ -1,143 +1,214 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>МайТренер</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>МайТренер Pro</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text-color: #ffffff;
+            --accent-color: #3390ec;
+            --hint-color: #707070;
+            --success: #31b545;
+            --gold: #ffd700;
+            --error: #e53935;
+        }
+        body { font-family: -apple-system, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; padding-bottom: 80px; }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
+        h2 { margin-top: 0; font-size: 18px; color: var(--accent-color); text-align: center; }
+        
+        label { display: block; font-size: 11px; color: var(--hint-color); text-transform: uppercase; margin: 10px 0 5px; padding-left: 5px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
+        
+        /* Выбор даты */
+        .date-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; cursor: pointer; margin-bottom: 15px; }
+        
+        /* Селектор подходов */
+        .selector { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .sel-item { min-width: 44px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 1px solid transparent; }
+        .sel-item.active { background: var(--accent-color); border-color: white; }
 
-<style>
-body { background:#0f0f0f; color:#fff; font-family:sans-serif; padding:15px }
-.card { background:#1a1a1a; border-radius:12px; padding:15px; margin-bottom:15px }
-input { width:100%; padding:10px; margin:5px 0; border-radius:8px; border:none }
-button { width:100%; padding:12px; background:#3390ec; color:white; border:none; border-radius:10px }
+        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--accent-color); color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-main:active { transform: scale(0.98); }
 
-.ex { background:#222; padding:10px; border-radius:10px; margin-top:10px }
-.set { display:flex; justify-content:space-between; padding:5px 0 }
-
-.green { color:#31b545 }
-.red { color:#e53935 }
-.gray { color:#aaa }
-</style>
+        /* Списки упражнений */
+        .ex-block { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--accent-color); }
+        .ex-header { font-weight: bold; font-size: 17px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .set-line { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+        
+        .delete-btn { color: var(--error); background: rgba(229, 57, 51, 0.1); border: none; border-radius: 6px; padding: 5px 10px; font-size: 16px; cursor: pointer; }
+        .record-tag { font-size: 11px; color: var(--gold); background: rgba(255, 214, 0, 0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
+        
+        .best-prev { font-size: 12px; color: var(--hint-color); margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .best-prev b { color: var(--gold); }
+    </style>
 </head>
-
 <body>
 
 <div class="card">
-<input id="name" placeholder="Упражнение">
-<input id="weight" type="number" placeholder="Вес">
-<input id="reps" type="number" placeholder="Повторы">
-<button onclick="addSet()">Добавить</button>
+    <div class="date-btn" id="date-display" onclick="changeDate()">
+        <span>📅 Дата: <b id="current-date">Сегодня</b></span>
+    </div>
+
+    <label>Упражнение</label>
+    <input type="text" id="ex-name" placeholder="Жим штанги, Присед..." list="ex-list">
+    <datalist id="ex-list"></datalist>
+
+    <label>Номер подхода</label>
+    <div class="selector" id="set-selector">
+        <div class="sel-item active" onclick="setNum(1)">1</div>
+        <div class="sel-item" onclick="setNum(2)">2</div>
+        <div class="sel-item" onclick="setNum(3)">3</div>
+        <div class="sel-item" onclick="setNum(4)">4</div>
+        <div class="sel-item" onclick="setNum(5)">5</div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+        <div style="flex:1">
+            <label>Вес (кг)</label>
+            <input type="number" id="weight" value="50" step="0.5">
+        </div>
+        <div style="flex:1">
+            <label>Повторы</label>
+            <input type="number" id="reps" value="10">
+        </div>
+    </div>
+
+    <button class="btn-main" onclick="addSet()">ДОБАВИТЬ В ЖУРНАЛ</button>
 </div>
 
-<div id="app"></div>
+<div id="workout-list"></div>
 
 <script>
-const tg = window.Telegram.WebApp;
+    const tg = window.Telegram.WebApp;
+    let selectedDate = new Date().toISOString().split('T')[0];
+    let currentSetNum = 1;
 
-function getData() {
-  return JSON.parse(localStorage.getItem("gym") || "{}");
-}
-
-function saveData(data) {
-  localStorage.setItem("gym", JSON.stringify(data));
-}
-
-function today() {
-  return new Date().toISOString().split("T")[0];
-}
-
-function addSet() {
-  const name = document.getElementById("name").value.trim();
-  const w = +document.getElementById("weight").value;
-  const r = +document.getElementById("reps").value;
-
-  if (!name || !w || !r) return;
-
-  const data = getData();
-
-  if (!data[name]) data[name] = [];
-
-  let session = data[name].find(s => s.date === today());
-
-  if (!session) {
-    session = { date: today(), sets: [] };
-    data[name].push(session);
-  }
-
-  session.sets.push({ w, r, id: Date.now() });
-
-  // сортировка
-  session.sets.sort((a,b)=>a.id-b.id);
-
-  saveData(data);
-  render();
-}
-
-function getPrevSession(name, currentDate) {
-  const data = getData()[name];
-  if (!data) return null;
-
-  return data
-    .filter(s => s.date < currentDate)
-    .sort((a,b)=> b.date.localeCompare(a.date))[0];
-}
-
-function compare(curr, prev) {
-  if (!prev) return null;
-
-  let diff = 0;
-
-  for (let i = 0; i < Math.min(curr.sets.length, prev.sets.length); i++) {
-    if (curr.sets[i].w === prev.sets[i].w) {
-      diff += curr.sets[i].r - prev.sets[i].r;
-    }
-  }
-
-  return diff;
-}
-
-function formatSets(sets) {
-  return sets.map(s => `${s.w}×${s.r}`).join(", ");
-}
-
-function render() {
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  const data = getData();
-
-  for (let name in data) {
-    const session = data[name].find(s => s.date === today());
-    if (!session) continue;
-
-    const prev = getPrevSession(name, today());
-    const diff = compare(session, prev);
-
-    let status = "";
-    if (diff !== null) {
-      if (diff > 0) status = `<div class="green">+${diff} повторов 👍</div>`;
-      else if (diff < 0) status = `<div class="red">${diff} повторов</div>`;
-      else status = `<div class="gray">Без изменений</div>`;
+    // Считаем лучший результат (коэффициент силы)
+    function calcRecord(w, r) {
+        return r <= 1 ? w : parseFloat((w * (1 + r / 30)).toFixed(1));
     }
 
-    app.innerHTML += `
-      <div class="ex">
-        <b>${name}</b>
+    function getHistory() {
+        return JSON.parse(localStorage.getItem('gym_v3_history') || '{}');
+    }
 
-        <div class="set">Сегодня: ${formatSets(session.sets)}</div>
+    function setNum(n) {
+        currentSetNum = n;
+        document.querySelectorAll('.sel-item').forEach((el, i) => {
+            el.classList.toggle('active', i === n - 1);
+        });
+    }
 
-        ${prev ? `<div class="set gray">Прошлый раз: ${formatSets(prev.sets)}</div>` : ""}
+    function changeDate() {
+        const newDate = prompt("Введите дату (ГГГГ-ММ-ДД):", selectedDate);
+        if (newDate) {
+            selectedDate = newDate;
+            document.getElementById('current-date').innerText = newDate;
+            render();
+        }
+    }
 
-        ${status}
-      </div>
-    `;
-  }
-}
+    function addSet() {
+        const name = document.getElementById('ex-name').value.trim();
+        const w = parseFloat(document.getElementById('weight').value);
+        const r = parseInt(document.getElementById('reps').value);
 
-render();
-tg.expand();
+        if (!name || isNaN(w) || isNaN(r)) return;
+
+        let history = getHistory();
+        if (!history[name]) history[name] = [];
+
+        let session = history[name].find(s => s.date === selectedDate);
+        if (!session) {
+            session = { date: selectedDate, sets: [] };
+            history[name].push(session);
+        }
+
+        session.sets.push({ w, r, n: currentSetNum, id: Date.now() });
+        localStorage.setItem('gym_v3_history', JSON.stringify(history));
+
+        if (currentSetNum < 5) setNum(currentSetNum + 1);
+        render();
+        tg.HapticFeedback.impactOccurred('medium');
+    }
+
+    function deleteSet(name, date, setId) {
+        let history = getHistory();
+        let session = history[name].find(s => s.date === date);
+        if (session) {
+            session.sets = session.sets.filter(s => s.id !== setId);
+            if (session.sets.length === 0) {
+                history[name] = history[name].filter(s => s.date !== date);
+            }
+            if (history[name].length === 0) delete history[name];
+        }
+        localStorage.setItem('gym_v3_history', JSON.stringify(history));
+        render();
+    }
+
+    function render() {
+        const list = document.getElementById('workout-list');
+        const history = getHistory();
+        list.innerHTML = `<h3 style="margin-left:5px; color:var(--accent-color)">Записи за ${selectedDate}</h3>`;
+        
+        let found = false;
+        for (let name in history) {
+            const session = history[name].find(s => s.date === selectedDate);
+            if (!session) continue;
+            found = true;
+
+            // Ищем лучший результат ДО этой тренировки
+            let absoluteBest = 0;
+            history[name].forEach(s => {
+                if (s.date < selectedDate) {
+                    s.sets.forEach(st => {
+                        let res = calcRecord(st.w, st.r);
+                        if (res > absoluteBest) absoluteBest = res;
+                    });
+                }
+            });
+
+            let html = `
+                <div class="ex-block">
+                    <div class="ex-header">${name}</div>
+            `;
+
+            session.sets.forEach(set => {
+                let currentRes = calcRecord(set.w, set.reps || set.r);
+                html += `
+                    <div class="set-line">
+                        <div>
+                            <b>Сет ${set.n}:</b> ${set.w}кг × ${set.r} 
+                            <span class="record-tag">Твой результат: ${currentRes}кг</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteSet('${name}', '${selectedDate}', ${set.id})">✕</button>
+                    </div>
+                `;
+            });
+
+            if (absoluteBest > 0) {
+                html += `<div class="best-prev">Лучший результат до этого: <b>${absoluteBest} кг</b></div>`;
+            }
+
+            html += `</div>`;
+            list.innerHTML += html;
+        }
+
+        if (!found) list.innerHTML += '<p style="text-align:center; color:var(--hint-color)">Нет записей за этот день</p>';
+        
+        // Обновляем список подсказок
+        const dl = document.getElementById('ex-list');
+        dl.innerHTML = Object.keys(history).map(n => `<option value="${n}">`).join('');
+    }
+
+    window.onload = () => {
+        render();
+        tg.expand();
+    };
 </script>
-
 </body>
 </html>
